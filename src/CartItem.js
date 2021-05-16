@@ -13,7 +13,19 @@ class CartItem extends React.Component{
     }
     // Arrow function automatically binds the value...
     increaseQuantity = () => {
-        console.log('this.state', this.state);
+        // this.state.Qty += 1;
+        // console.log('this.state', this.state);
+        // setState form 1
+        // this.setState({
+        //     Qty: this.state.Qty +1
+        // });
+
+        // setState form 2 -- if previous state required
+        this.setState( (prevState) => {
+            return {
+                Qty : prevState.Qty + 1
+            }
+        });
     }
 
     render(){
