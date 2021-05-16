@@ -1,35 +1,6 @@
 import React from 'react';
 
 class CartItem extends React.Component{
-    
-    // Arrow function automatically binds the value...
-    increaseQuantity = () => {
-        // this.state.Qty += 1;
-        // console.log('this.state', this.state);
-        // setState form 1
-        // this.setState({
-        //     Qty: this.state.Qty +1
-        // });
-
-        // setState form 2 -- if previous state required
-        this.setState( (prevState) => {
-            return {
-                Qty : prevState.Qty + 1
-            }
-        });
-    }
-
-    decreaseQuantity = () => {
-        const { Qty } = this.state;
-        if(Qty === 0){
-            return;
-        }
-        this.setState( (prevState) => {
-            return {
-                Qty : prevState.Qty - 1
-            }
-        });
-    }
 
     render(){
         const { price , title, Qty } = this.props.product;
@@ -48,14 +19,14 @@ class CartItem extends React.Component{
                             alt = "increase" 
                             className = "action-icons" 
                             src = "https://img-premium.flaticon.com/png/512/709/709484.png?token=exp=1621137042~hmac=255511c0d4c8dd01d415be59860c065e"
-                            onClick = {this.increaseQuantity}    
+                            onClick = {() => this.props.onIncreaseQuantity(this.props.product)}    
                         />
 
                         <img 
                             alt = "decrease" 
                             className = "action-icons" 
                             src = "https://img-premium.flaticon.com/png/512/992/992683.png?token=exp=1621137162~hmac=8e7011260f74b5039532ad80098d5d01" 
-                            onClick = { this.decreaseQuantity }
+                            onClick = { () => this.props.onDecreaseQuantity(this.props.product) }
                         />
 
                         <img 
