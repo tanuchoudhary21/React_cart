@@ -1,37 +1,64 @@
 import React from 'react';
 import CartItem from './CartItem';
 import Cart from './Cart';
-import Navbar from './Navbar'
+import Navbar from './Navbar';
+import firebase from 'firebase';
 
 class App extends React.Component {
       constructor(){
         super();
         this.state = {
-            products : [
-                {
-                    id : 1,
-                    price : 999,
-                    title: 'Mobile Phone',
-                    Qty: 1,
-                    img: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80'
-                },
-                {
-                    id: 2,
-                    price : 1999,
-                    title: 'Watch',
-                    Qty: 2,
-                    img: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
-                },
-                {
-                    id: 3,
-                    price : 9999,
-                    title: 'Laptop',
-                    Qty: 1,
-                    img: 'https://images.unsplash.com/photo-1593642532454-e138e28a63f4?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80'
-                }
-            ]
+            products : [],
+            loading : true
         }
-    }
+
+        this.db = firebase.firestore();
+     }
+
+     componentDidMount(){
+      //  firebase
+      //   .firestore()
+      //   .collection('products')
+      //   .get()
+      //   .then((snapshot) => {
+      //     console.log('SNAPSHOT',snapshot);
+
+      //     snapshot.docs.map((doc) => {
+      //       console.log(doc.data());
+      //     });
+
+      //     const products = snapshot.docs.map((doc) => {
+      //       const data = doc.data();
+      //       data['id'] = doc.id;
+      //       return data;
+      //     })
+      //     this.setState({
+      //       products,
+      //       loading: false
+      //     })
+      //   })
+
+      this.db
+        .collection('products')
+        .onSnapshot((snapshot) => {
+          console.log('SNAPSHOT',snapshot);
+
+          // snapshot.docs.map((doc) => {
+          //   console.log(doc.data());
+          // });
+
+          const products = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            data['id'] = doc.id;
+            return data;
+          })
+          this.setState({
+            products,
+            loading: false
+          })
+        })
+
+     }
 
     handleIncreaseQuantity = (product) => {
         console.log("Hey please increase the Quantity of" , product);
@@ -91,19 +118,38 @@ class App extends React.Component {
 
       return total;
     }
+    // This was add product button function...
+    // addProduct = () => {
+    //   this.db
+    //     .collection('products')
+    //     .add({
+    //       img : '',
+    //       price: 900,
+    //       Qty: 2,
+    //       title: 'Washing Machine'
+    //     })
+    //     .then((docRef) => {
+    //       console.log('Product has been added' ,docRef);
+    //     })
+    //     .catch((error) => {
+    //       console.log('Error: ', error);
+    //     })
+    // }
 
   
     render(){
-      const { products } = this.state;
+      const { products , loading } = this.state;
       return (
         <div className="App">
           <Navbar count = {this.getCartCount()} />
+          {/* <button onClick = { this.addProduct } style = {{padding: 20, fontSize: 20}} >Add a Product</button> */}
           <Cart 
             products = { products }
             onIncreaseQuantity = { this.handleIncreaseQuantity }
             onDecreaseQuantity = { this.handleDecreaseQuantity }
             onDeleteProduct = { this.handleDeleteProduct }
           />
+          { loading && <h1>LOADING PRODUCTS !!</h1> }
           <div style = { {padding : 10 ,fontSize: 20} } >Total : Rs. {this.getCartTotal()} </div>
         </div>
       );
